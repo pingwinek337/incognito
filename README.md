@@ -35,6 +35,13 @@ Alias: `/inc`. W menu klikniecie starego nicku z historii wlacza go ponownie.
 
 Prefix, lista slow do nickow, szansa na koncowke `pl` i komunikaty sa w `plugins/Incognito/config.yml`.
 
+## Plugin TAB
+
+Jesli masz TAB, Incognito podmienia przez jego API prefix nad glowa i w tabie na prefix incognito
+(`tab-hook: true`). Zmiany sa tymczasowe i znikaja po wylaczeniu incognito, nic nie jest zapisywane
+w plikach TAB. TAB nie pozwala zmienic samego nicku nad glowa, wiec ten pochodzi ze zmiany profilu gracza
+(w konsoli pojawia sie wtedy linia `Nick w profilu zmieniony na ...`).
+
 ## Ograniczenia
 
 - Plugin czatu (EssentialsChat, LPC itp.) moze nadpisywac format czatu - wtedy zmien jego priorytet/format.

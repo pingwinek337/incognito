@@ -57,11 +57,13 @@ public final class IncognitoManager {
     private final IncognitoPlugin plugin;
     private final File file;
     private final Map<UUID, Data> data = new ConcurrentHashMap<>();
+    private final TabHook tabHook;
     private volatile Component prefix = Component.empty();
 
     public IncognitoManager(IncognitoPlugin plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "data.yml");
+        this.tabHook = new TabHook(plugin, this);
         reloadPrefix();
     }
 
@@ -173,6 +175,7 @@ public final class IncognitoManager {
         if (plugin.getConfig().getBoolean("change-real-name", true)) {
             setProfileName(player, nick);
         }
+        tabHook.apply(player, nick);
     }
 
     public void restoreVisuals(Player player) {
@@ -182,9 +185,10 @@ public final class IncognitoManager {
         }
         player.displayName(null);
         player.playerListName(null);
-        if (plugin.getConfig().getBoolean("change-real-name", true) && d.realName != null) {
+        if (plugin.getConfig().getBoolean("change-real-name", true)) {
             setProfileName(player, d.realName);
         }
+        tabHook.reset(player);
     }
 
     private void setProfileName(Player player, String name) {
@@ -194,6 +198,8 @@ public final class IncognitoManager {
             Set<ProfileProperty> props = new HashSet<>(old.getProperties());
             fresh.setProperties(props); // zachowuje skina
             player.setPlayerProfile(fresh);
+            plugin.getLogger().info("Nick w profilu zmieniony na '" + player.getName()
+                    + "' (UUID " + player.getUniqueId() + ")");
         } catch (Throwable t) {
             plugin.getLogger().log(Level.WARNING,
                     "Nie udalo sie zmienic nicku nad glowa (zmieniony zostaje tylko czat/tab): " + t);

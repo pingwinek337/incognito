@@ -9,6 +9,10 @@ timezone: "Europe/Warsaw"
 # false = zmienia tylko czat i tab
 change-real-name: true
 
+# true = jesli masz plugin TAB, to prefix incognito jest ustawiany tez w TAB
+# (nad glowa i w tabie), zamiast prawdziwej rangi. Zmiany sa tymczasowe.
+tab-hook: true
+
 # Ile ostatnich wpisow historii trzymac na gracza
 history-limit: 100
 
