@@ -1,0 +1,63 @@
+# Prefix pokazywany zamiast rangi (czat + tab).
+# Kolory: &a, &l itd. oraz hex: &#RRGGBB
+prefix: "&#808080&lɢ&#C0C0C0&lʀ&#FFFFFF&lᴀ&#BDBDBD&lᴄ&#7A7A7A&lᴢ &r"
+
+# Strefa czasowa dat w menu historii
+timezone: "Europe/Warsaw"
+
+# true = zmienia tez nick nad glowa i w liscie graczy dla innych (Paper)
+# false = zmienia tylko czat i tab
+change-real-name: true
+
+# Ile ostatnich wpisow historii trzymac na gracza
+history-limit: 100
+
+nick:
+  # Szansa (w %) na koncowke "pl", np. macius1246pl
+  chance-pl: 40
+  min-number: 10
+  max-number: 99999
+  # Slowa bazowe (tylko litery/cyfry/_, nick max 16 znakow razem z numerem)
+  words:
+    - ukryty
+    - macius
+    - anon
+    - gracz
+    - kamil
+    - szymon
+    - gosc
+    - cichy
+    - janek
+    - bartek
+    - kacper
+    - oskar
+    - xmaciek
+    - pro
+    - noob
+    - mati
+    - wojtek
+    - krzysiek
+    - dawid
+    - igor
+    - tomek
+    - filip
+    - adrian
+    - olek
+    - stefan
+    - nieznany
+    - cien
+    - duch
+    - student
+    - ziomek
+
+messages:
+  enabled: "&aIncognito wlaczone. Twoj nick: &f{nick}"
+  disabled: "&aIncognito wylaczone. Wrocil twoj normalny nick."
+  already-off: "&cIncognito nie jest wlaczone."
+  no-permission: "&cNie masz uprawnien."
+  players-only: "Ta komenda jest tylko dla graczy."
+  nick-taken: "&cNick &f{nick}&c jest zajety."
+  nick-invalid: "&cNick musi miec 3-16 znakow: litery, cyfry lub _."
+  history-cleared: "&aWyczyszczono historie incognito."
+  reloaded: "&aPrzeladowano konfiguracje."
+  usage: "&7Uzycie: &f/incognito [gui|on|off|nick <nick>|reload]"

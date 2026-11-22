@@ -1,0 +1,23 @@
+name: Incognito
+version: ${project.version}
+main: pl.incognito.IncognitoPlugin
+api-version: '1.20'
+author: pingwinek337
+description: Losowy nick i ranga incognito bez zabierania uprawnien.
+
+commands:
+  incognito:
+    description: Wlacza/wylacza tryb incognito
+    usage: /incognito [gui|on|off|nick <nick>|reload]
+    aliases: [inc]
+
+permissions:
+  incognito.use:
+    description: Uzywanie /incognito i menu
+    default: op
+  incognito.nick:
+    description: Ustawianie wlasnego nicku (/incognito nick <nick>)
+    default: op
+  incognito.admin:
+    description: Przeladowanie konfiguracji (/incognito reload)
+    default: op
