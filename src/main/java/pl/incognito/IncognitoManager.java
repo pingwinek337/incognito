@@ -198,11 +198,50 @@ public final class IncognitoManager {
             Set<ProfileProperty> props = new HashSet<>(old.getProperties());
             fresh.setProperties(props); // zachowuje skina
             player.setPlayerProfile(fresh);
-            plugin.getLogger().info("Nick w profilu zmieniony na '" + player.getName()
-                    + "' (UUID " + player.getUniqueId() + ")");
+            plugin.getLogger().info("Profil gracza " + player.getUniqueId() + ": ustawiono nick '" + name
+                    + "', odczytany z profilu: '" + player.getPlayerProfile().getName() + "'");
+
+            // jesli inny plugin (np. SkinsRestorer) przywroci stary nick, zaloguj to i ustaw ponownie
+            if (plugin.isEnabled()) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    String expected = nickOf(player.getUniqueId());
+                    if (expected == null) {
+                        expected = realNameOf(player.getUniqueId());
+                    }
+                    if (!name.equals(expected)) {
+                        return; // w miedzyczasie zmieniono tryb
+                    }
+                    String actual = player.getPlayerProfile().getName();
+                    if (!name.equals(actual)) {
+                        plugin.getLogger().warning("Nick w profilu zostal zmieniony z '" + name + "' na '"
+                                + actual + "' przez inny plugin - ustawiam ponownie.");
+                        setProfileNameQuiet(player, name);
+                    }
+                }, 20L);
+            }
         } catch (Throwable t) {
             plugin.getLogger().log(Level.WARNING,
                     "Nie udalo sie zmienic nicku nad glowa (zmieniony zostaje tylko czat/tab): " + t);
+        }
+    }
+
+    private String realNameOf(UUID id) {
+        Data d = data.get(id);
+        return d == null ? null : d.realName;
+    }
+
+    /** Ustawia nick w profilu bez dalszych kontroli i logow (ponowna proba). */
+    private void setProfileNameQuiet(Player player, String name) {
+        try {
+            PlayerProfile old = player.getPlayerProfile();
+            PlayerProfile fresh = Bukkit.createProfile(player.getUniqueId(), name);
+            fresh.setProperties(new HashSet<>(old.getProperties()));
+            player.setPlayerProfile(fresh);
+        } catch (Throwable t) {
+            plugin.getLogger().log(Level.WARNING, "Ponowne ustawienie nicku w profilu nie powiodlo sie: " + t);
         }
     }
 

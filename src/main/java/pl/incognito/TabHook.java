@@ -93,8 +93,11 @@ public final class TabHook {
 
             Object nameTags = manager(api, "getNameTagManager");
             if (nameTags != null) {
-                call(nameTags, "setPrefix", tabPlayer, prefix);
+                boolean ok = call(nameTags, "setPrefix", tabPlayer, prefix);
                 call(nameTags, "setSuffix", tabPlayer, "");
+                if (!ok) {
+                    plugin.getLogger().warning("TAB: nie znaleziono NameTagManager#setPrefix");
+                }
             }
             Object tabList = manager(api, "getTabListFormatManager");
             if (tabList != null) {
@@ -116,16 +119,17 @@ public final class TabHook {
             if (tabPlayer == null) {
                 return;
             }
+            // w API TAB reset = przekazanie null do settera (starsze wersje maja resetX)
             Object nameTags = manager(api, "getNameTagManager");
             if (nameTags != null) {
-                call(nameTags, "resetPrefix", tabPlayer);
-                call(nameTags, "resetSuffix", tabPlayer);
+                clear(nameTags, "Prefix", tabPlayer);
+                clear(nameTags, "Suffix", tabPlayer);
             }
             Object tabList = manager(api, "getTabListFormatManager");
             if (tabList != null) {
-                call(tabList, "resetPrefix", tabPlayer);
-                call(tabList, "resetSuffix", tabPlayer);
-                call(tabList, "resetName", tabPlayer);
+                clear(tabList, "Prefix", tabPlayer);
+                clear(tabList, "Suffix", tabPlayer);
+                clear(tabList, "Name", tabPlayer);
             }
         } catch (Throwable t) {
             plugin.getLogger().log(Level.WARNING, "Przywracanie rangi w TAB nie powiodlo sie: " + t);
@@ -150,7 +154,17 @@ public final class TabHook {
         }
     }
 
-    private static void call(Object target, String name, Object... args) throws Exception {
+    /** Przywraca wartosc z TAB: setX(player, null), a gdy nie ma - resetX(player). */
+    private void clear(Object target, String what, Object tabPlayer) throws Exception {
+        if (!call(target, "set" + what, tabPlayer, null)) {
+            if (!call(target, "reset" + what, tabPlayer)) {
+                plugin.getLogger().warning("TAB: nie znaleziono metody do przywrocenia '" + what + "'");
+            }
+        }
+    }
+
+    /** @return true, jesli znaleziono pasujaca metode i ja wywolano */
+    private static boolean call(Object target, String name, Object... args) throws Exception {
         for (Method m : target.getClass().getMethods()) {
             if (!m.getName().equals(name) || m.getParameterCount() != args.length) {
                 continue;
@@ -158,7 +172,8 @@ public final class TabHook {
             Class<?>[] types = m.getParameterTypes();
             boolean matches = true;
             for (int i = 0; i < types.length; i++) {
-                if (!types[i].isInstance(args[i])) {
+                boolean ok = args[i] == null ? !types[i].isPrimitive() : types[i].isInstance(args[i]);
+                if (!ok) {
                     matches = false;
                     break;
                 }
@@ -166,8 +181,9 @@ public final class TabHook {
             if (matches) {
                 m.setAccessible(true);
                 m.invoke(target, args);
-                return;
+                return true;
             }
         }
+        return false;
     }
 }
